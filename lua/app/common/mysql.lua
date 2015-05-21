@@ -1,3 +1,63 @@
+
+local _M = {}
+--分库配置
+local config  = {
+	['default']={
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306},
+    	{['ip']='127.0.0.1', ['port']=3306}
+    }
+}
+local dbName = 'sdkdata'
+local userName = 'root'
+local passWord = ''
+function _M.init(index)
+	local k = index % 16
+	local ip = config.default[k].ip;
+	local port = config.default[k].port;
+	local mysql = require "resty.mysql"
+	local db, err = mysql:new()
+    if not db then
+    	ngx.say("failed to instantiate mysql: ", err)
+    	return
+    end
+	db:set_timeout(1000) -- 1 sec
+	local ok, err, errno, sqlstate = db:connect{
+            host = ip,
+            port = port,
+            database = dbName,
+            user = userName,
+            password = passWord,
+            max_packet_size = 1024 * 1024 }
+
+    if not ok then
+     	ngx.say("failed to connect: ", err, ": ", errno, " ", sqlstate)
+        return
+    end
+    ngx.say("connected to mysql.")
+	return db
+end
+
+function _M.close()
+	_M.redis:close()
+end
+
+return _M;
+
+--[[
 local mysql = require "resty.mysql"
 local db, err = mysql:new()
     if not db then
@@ -89,3 +149,5 @@ local ok, err = db:set_keepalive(10000, 100)
     local template = require "resty.template"
 
     template.render("view.html", { message = "Hello, World!" })
+    
+    --]]

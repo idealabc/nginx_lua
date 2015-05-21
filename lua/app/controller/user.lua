@@ -3,6 +3,8 @@ local _M = {}
 
 function _M.login()
 
-    ngx.say("user.login")
+	local red = require "app.common.mysql".init(18)
+
 end
+
 return _M

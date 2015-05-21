@@ -1,4 +1,6 @@
 --
+--require = require"app.common.require".require 
+
 local str = require "app.common.string"
 local ok, new_tab = pcall(require, "table.new")
 if not ok then
@@ -19,10 +21,11 @@ function _M.router()
     if t then
     	local ctrlName = t[cIndex]
     	local callName = t[mIndex]
+    	 
     	if ctrlName then
-    		local ok, ctrl =  pcall(require, "app.controller."..ctrlName)
-    		if ok and callName then 
-    			local ok, call =  pcall(ctrl[callName])
+    		local ctrl =  require ("app.controller."..ctrlName)
+    		if ctrl and callName then 
+    			local call =  ctrl[callName]()
     		end
     	end
     end
